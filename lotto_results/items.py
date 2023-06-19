@@ -12,3 +12,11 @@ class LottoResultsItem(scrapy.Item):
     # name = scrapy.Field()
     lotto = Field()
     pass
+
+
+class LottoItem(scrapy.item):
+    url = scrapy.Field()
+    draw = scrapy.Field()
+    winning_combination = scrapy.Field()
+    winning_value = scrapy.Field()
+    draw_date = scrapy.Field()

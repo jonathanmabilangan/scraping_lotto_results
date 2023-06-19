@@ -16,7 +16,7 @@ class LottoSpider(scrapy.Spider):
         # Test run for start_request method alone
         user_input = [
             {"month": "April", "day": "24", "year": "2022"},
-            {"month": "January", "day": "8", "year": "2023"},
+            {"month": "February", "day": "10", "year": "2023"},
             {"month": "July", "day": "14", "year": "2021"},
         ]
         urls = [
@@ -28,18 +28,12 @@ class LottoSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        # page = response.url.split("/")[-2]
-        # filename = f"logs/{page}.html"
-        # Path(filename).write_bytes(response.body)
-        # self.log(f"Saved file logs/{filename}")
-        # for row in response.xpath('//*[@id="post-******"]/div[2]/figure[1]'):
-        for row in response.xpath('//*[contains(@class, "has-fixed-layout")]'):
-            # filename = f"logs/{row}.html"
-            # Path(filename).write_bytes(response.body)
-            # self.log(f"{row}")
-            # print(f"someone {row.css('td::text').get()}")
-            # print(f"headers {row.css('th::text').get()}")
-            draw = w3lib.html.remove_tags(row.xpath(".//strong").get())
-            result = w3lib.html.remove_tags(row.xpath(".//td")[1].get())
-
-            print(f"Lotto:{draw}, Result: {result}")
+        table_row = response.css("table tr")
+        draw = w3lib.html.remove_tags(
+            table_row[1].xpath("//div[2]/figure[1]/table/thead/tr/th[1]/strong").get()
+        )
+        draw_result = w3lib.html.remove_tags(
+            table_row[1].xpath("//div[2]/figure[1]/table/tbody/tr[1]/td[2]").get()
+        )
+        date = response.css("span.post_date ::text").get()
+        yield {"draw": draw, "result": draw_result, "date": date}
