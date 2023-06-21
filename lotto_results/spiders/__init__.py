@@ -4,8 +4,9 @@
 # your spiders.
 import scrapy
 
-from pathlib import Path
+# from pathlib import Path
 import w3lib.html
+from lotto_results.items import LottoItem
 
 
 class LottoSpider(scrapy.Spider):
@@ -29,11 +30,48 @@ class LottoSpider(scrapy.Spider):
 
     def parse(self, response):
         table_row = response.css("table tr")
-        draw = w3lib.html.remove_tags(
+
+        draw_entry = LottoItem()
+
+        draw_entry["url"] = response.url
+        draw_entry["draw"] = w3lib.html.remove_tags(
             table_row[1].xpath("//div[2]/figure[1]/table/thead/tr/th[1]/strong").get()
         )
-        draw_result = w3lib.html.remove_tags(
+        draw_entry["winning_combination"] = w3lib.html.remove_tags(
             table_row[1].xpath("//div[2]/figure[1]/table/tbody/tr[1]/td[2]").get()
         )
-        date = response.css("span.post_date ::text").get()
-        yield {"draw": draw, "result": draw_result, "date": date}
+        draw_entry["winning_value"] = w3lib.html.remove_tags(
+            table_row[1].xpath("//div[2]/figure[1]/table/tbody/tr[2]/td[2]").get()
+        )
+        draw_entry["num_of_winners"] = w3lib.html.remove_tags(
+            table_row[1].xpath("//div[2]/figure[1]/table/tbody/tr[3]/td[2]").get()
+        )
+        draw_entry["draw_date"] = response.css("span.post_date ::text").get()
+
+        # url = response.url
+        # draw = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[1]/table/thead/tr/th[1]/strong").get()
+        # )
+        # winning_combination = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[1]/table/tbody/tr[1]/td[2]").get()
+        # )
+        # jackpot_prize = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[1]/table/tbody/tr[2]/td[2]").get()
+        # )
+        # num_of_winners = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[1]/table/tbody/tr[3]/td[2]").get()
+        # )
+        # date = response.css("span.post_date ::text").get()
+
+        # yield {
+        #     "URL": url,
+        #     "Draw": draw,
+        #     "Result": winning_combination,
+        #     "Jackpot Prize": jackpot_prize,
+        #     "Number of Winner/s": num_of_winners,
+        #     "Date": date,
+        # }
+
+        # print(url, draw, winning_combination, jackpot_prize, num_of_winners, date)
+
+        yield draw_entry
