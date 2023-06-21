@@ -1,3 +1,6 @@
+from decouple import config
+import os
+
 # Scrapy settings for lotto_results project
 #
 # For simplicity, this file contains only settings considered important or
@@ -93,3 +96,11 @@ ITEM_PIPELINES = {
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+
+# Personal settings
+
+HOST = config("host")
+USER = config("user")
+PASSWORD = config("password")
+DATABASE = config("database")

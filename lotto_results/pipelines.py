@@ -6,9 +6,10 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from decimal import Decimal
 from datetime import datetime
+from decouple import config
 import mysql.connector
+import settings
 
 
 class LottoResultsPipeline:
@@ -29,7 +30,10 @@ class LottoResultsPipeline:
 class SaveToDBPipeline:
     def __init__(self) -> None:
         self.conn = mysql.connector.connect(
-            host="localhost", user="root", password="jmab", database="lotto_result"
+            host=settings.HOST,
+            user=settings.USER,
+            password=settings.PASSWORD,
+            database=settings.DATABASE,
         )
 
         self.cur = self.conn.cursor()
