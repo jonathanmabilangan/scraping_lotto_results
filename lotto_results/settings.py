@@ -1,5 +1,19 @@
-from decouple import config
+# from decouple import config'
 import os
+from dotenv import load_dotenv, find_dotenv
+from pathlib import Path
+from os.path import join, dirname
+
+
+dotenv_path = join(dirname(__file__), ".env")
+load_dotenv(dotenv_path)
+
+# DB env
+
+HOST = os.environ.get("HOST")
+DB_USER = os.environ.get("db_user")
+PASSWORD = os.environ.get("db_pass")
+DATABASE = os.environ.get("DATABASE")
 
 # Scrapy settings for lotto_results project
 #
@@ -96,11 +110,3 @@ ITEM_PIPELINES = {
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-
-
-# Personal settings
-
-HOST = config("host")
-USER = config("user")
-PASSWORD = config("password")
-DATABASE = config("database")

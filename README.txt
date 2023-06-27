@@ -1,6 +1,9 @@
 # Disclaimer: This application does not predict what will be the winning number combination of the future lotto results.
 
 # Setting up in local
+  Fill out environment variables in local.env file
+    * If database is not yet created. Kindly create one using MySQL
+
   Create virtual environment through terminal:
   ```python3 -m venv venv```
 
