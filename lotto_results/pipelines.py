@@ -28,12 +28,16 @@ class LottoResultsPipeline:
 
 class SaveToDBPipeline:
     def __init__(self) -> None:
-        self.conn = mysql.connector.connect(
-            host=settings.HOST,
-            user=settings.DB_USER,
-            password=settings.PASSWORD,
-            database=settings.DATABASE,
-        )
+        try:
+            self.conn = mysql.connector.connect(
+                host=settings.HOST,
+                user=settings.DB_USER,
+                password=settings.PASSWORD,
+                database=settings.DATABASE,
+            )
+
+        except ConnectionError as conerror:
+            raise conerror
 
         self.cur = self.conn.cursor()
 

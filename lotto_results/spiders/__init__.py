@@ -6,6 +6,7 @@ import scrapy
 
 # from pathlib import Path
 import w3lib.html
+import lotto_results.settings as settings
 from lotto_results.items import LottoItem
 
 
