@@ -17,9 +17,13 @@ class LottoSpider(scrapy.Spider):
     def start_requests(self):
         # Test run for start_request method alone
         user_input = [
-            {"month": "April", "day": "24", "year": "2022"},
-            {"month": "February", "day": "10", "year": "2023"},
-            {"month": "July", "day": "14", "year": "2021"},
+            {"month": "June", "day": "19", "year": "2023"},
+            {"month": "June", "day": "20", "year": "2023"},
+            {"month": "June", "day": "22", "year": "2023"},
+            {"month": "June", "day": "23", "year": "2023"},
+            {"month": "June", "day": "24", "year": "2023"},
+            {"month": "June", "day": "25", "year": "2023"},
+            {"month": "June", "day": "26", "year": "2023"},
         ]
         urls = [
             f"https://www.lottopcso.com/pcso-lotto-result-{dates['month']}-{dates['day']}-{dates['year']}/"
@@ -32,47 +36,91 @@ class LottoSpider(scrapy.Spider):
     def parse(self, response):
         table_row = response.css("table tr")
 
-        draw_entry = LottoItem()
+        draw_entry_1 = LottoItem()
 
-        draw_entry["url"] = response.url
-        draw_entry["draw"] = w3lib.html.remove_tags(
-            table_row[1].xpath("//div[2]/figure[1]/table/thead/tr/th[1]/strong").get()
+        draw_entry_1["url"] = response.url
+        draw_entry_1["draw"] = w3lib.html.remove_tags(
+            table_row[1].xpath("//div[2]/figure[1]/table/thead/tr/th[1]").get()
         )
-        draw_entry["winning_combination"] = w3lib.html.remove_tags(
+        draw_entry_1["winning_combination"] = w3lib.html.remove_tags(
             table_row[1].xpath("//div[2]/figure[1]/table/tbody/tr[1]/td[2]").get()
         )
-        draw_entry["winning_value"] = w3lib.html.remove_tags(
+        draw_entry_1["winning_value"] = w3lib.html.remove_tags(
             table_row[1].xpath("//div[2]/figure[1]/table/tbody/tr[2]/td[2]").get()
         )
-        draw_entry["num_of_winners"] = w3lib.html.remove_tags(
+        draw_entry_1["num_of_winners"] = w3lib.html.remove_tags(
             table_row[1].xpath("//div[2]/figure[1]/table/tbody/tr[3]/td[2]").get()
         )
-        draw_entry["draw_date"] = response.css("span.post_date ::text").get()
+        draw_entry_1["draw_date"] = response.css("span.post_date ::text").get()
 
+        draw_entry_2 = LottoItem()
+
+        draw_entry_2["url"] = response.url
+        draw_entry_2["draw"] = w3lib.html.remove_tags(
+            table_row[0].xpath("//div[2]/figure[2]/table/thead/tr/th[1]").get()
+        )
+        draw_entry_2["winning_combination"] = w3lib.html.remove_tags(
+            table_row[0].xpath("//div[2]/figure[2]/table/tbody/tr[1]/td[2]").get()
+        )
+        draw_entry_2["winning_value"] = w3lib.html.remove_tags(
+            table_row[0].xpath("//div[2]/figure[2]/table/tbody/tr[2]/td[2]").get()
+        )
+        draw_entry_2["num_of_winners"] = w3lib.html.remove_tags(
+            table_row[0].xpath("//div[2]/figure[2]/table/tbody/tr[3]/td[2]").get()
+        )
+        draw_entry_2["draw_date"] = response.css("span.post_date ::text").get()
+
+        draws = [draw_entry_1, draw_entry_2]
+        for draw in draws:
+            yield draw
+
+        # For debugging
         # url = response.url
-        # draw = w3lib.html.remove_tags(
-        #     table_row[0].xpath("//div[2]/figure[1]/table/thead/tr/th[1]/strong").get()
+        # first_draw = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[1]/table/thead/tr/th[1]").get()
         # )
-        # winning_combination = w3lib.html.remove_tags(
+        # first_winning_combination = w3lib.html.remove_tags(
         #     table_row[0].xpath("//div[2]/figure[1]/table/tbody/tr[1]/td[2]").get()
         # )
-        # jackpot_prize = w3lib.html.remove_tags(
+        # first_jackpot_prize = w3lib.html.remove_tags(
         #     table_row[0].xpath("//div[2]/figure[1]/table/tbody/tr[2]/td[2]").get()
         # )
-        # num_of_winners = w3lib.html.remove_tags(
+        # first_num_of_winners = w3lib.html.remove_tags(
         #     table_row[0].xpath("//div[2]/figure[1]/table/tbody/tr[3]/td[2]").get()
         # )
         # date = response.css("span.post_date ::text").get()
 
-        # yield {
-        #     "URL": url,
-        #     "Draw": draw,
-        #     "Result": winning_combination,
-        #     "Jackpot Prize": jackpot_prize,
-        #     "Number of Winner/s": num_of_winners,
-        #     "Date": date,
+        # second_draw = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[2]/table/thead/tr/th[1]").get()
+        # )
+        # second_winning_combination = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[2]/table/tbody/tr[1]/td[2]").get()
+        # )
+        # second_jackpot_prize = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[2]/table/tbody/tr[2]/td[2]").get()
+        # )
+        # second_num_of_winners = w3lib.html.remove_tags(
+        #     table_row[0].xpath("//div[2]/figure[2]/table/tbody/tr[3]/td[2]").get()
+        # )
+
+        # first_draw = {
+        #     "url": url,
+        #     "draw": first_draw,
+        #     "winning combination": first_winning_combination,
+        #     "jackpot prize": first_jackpot_prize,
+        #     "num of winners": first_num_of_winners,
+        #     "date": date,
         # }
 
-        # print(url, draw, winning_combination, jackpot_prize, num_of_winners, date)
+        # second_draw = {
+        #     "url": url,
+        #     "draw": second_draw,
+        #     "winning combination": second_winning_combination,
+        #     "jackpot prize": second_jackpot_prize,
+        #     "num of winners": second_num_of_winners,
+        #     "date": date,
+        # }
 
-        yield draw_entry
+        # draws = [first_draw, second_draw]
+        # for draw in draws:
+        #     yield draw
